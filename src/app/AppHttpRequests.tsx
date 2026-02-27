@@ -4,10 +4,11 @@ import type { Todolist } from "@/features/todolists/api/todolistsApi.types"
 import { type ChangeEvent, type CSSProperties, useEffect, useState } from "react"
 import Checkbox from "@mui/material/Checkbox"
 import { tasksApi } from "@/features/todolists/api/tasksApi.ts"
+import { DomainTask } from "@/features/todolists/api/taskApi.types.ts"
 
 export const AppHttpRequests = () => {
   const [todolists, setTodolists] = useState<Todolist[]>([])
-  const [tasks, setTasks] = useState<any>({})
+  const [tasks, setTasks] = useState<Record<string, DomainTask[]>>({})
 
   useEffect(() => {
     todolistsApi.getTodolists().then((res) => {
@@ -15,7 +16,7 @@ export const AppHttpRequests = () => {
       setTodolists(todolists)
       todolists.forEach((todolist) => {
         tasksApi.getTasks(todolist.id).then((res) => {
-          console.log(res.data)
+          setTasks({ ...tasks, [todolist.id]: res.data.items })
         })
       })
     })
