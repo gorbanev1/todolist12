@@ -67,13 +67,12 @@ export const AppHttpRequests = () => {
     const model: UpdateTaskModel = {
       description: task.description,
       title: task.title,
-
       priority: task.priority,
       startDate: task.startDate,
       deadline: task.deadline,
       status: e.target.checked ? TaskStatus.Completed : TaskStatus.New,
     }
-    tasksApi.changeTaskStatus(todolistId, task.id, model).then((res) => {
+    tasksApi.changeTask(todolistId, task.id, model).then((res) => {
       console.log(res.data)
       setTasks((prevState) => {
         return {
@@ -84,7 +83,26 @@ export const AppHttpRequests = () => {
     })
   }
 
-  const changeTaskTitle = (task: any, title: string) => {}
+  const changeTaskTitle = (task: any, title: string) => {
+    const todolistId = task.todoListId
+
+    const model: UpdateTaskModel = {
+      description: task.description,
+      title,
+      priority: task.priority,
+      startDate: task.startDate,
+      deadline: task.deadline,
+      status: task.status,
+    }
+    tasksApi.changeTask(todolistId, task.id, model).then((res) => {
+      setTasks((prevState) => {
+        return {
+          ...prevState,
+          todolistId,
+        }
+      })
+    })
+  }
 
   return (
     <div style={{ margin: "20px" }}>
