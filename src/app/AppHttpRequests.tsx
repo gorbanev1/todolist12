@@ -40,12 +40,17 @@ export const AppHttpRequests = () => {
   const changeTodolistTitle = (id: string, title: string) => {
     todolistsApi.changeTodolistTitle({ id, title }).then(() => {
       setTodolists((prevState) => prevState.map((todolist) => (todolist.id === id ? { ...todolist, title } : todolist)))
+      setTasks((prevState) => {
+        const newState = { ...prevState }
+        delete newState[id]
+        return newState
+      })
     })
   }
 
   const createTask = (todolistId: string, title: string) => {
-    const newTask = { title }
-    tasksApi.setTask(todolistId, newTask).then((res) => {
+    const model = { title }
+    tasksApi.setTask(todolistId, model).then((res) => {
       const newTask = res.data.data.item
       setTasks((prevState) => {
         return { ...prevState, [todolistId]: [newTask, ...(prevState[todolistId] ?? [])] }
