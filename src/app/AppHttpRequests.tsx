@@ -27,16 +27,19 @@ export const AppHttpRequests = () => {
     todolistsApi.createTodolist(title).then((res) => {
       const newTodolist = res.data.data.item
       setTodolists((prevState) => [newTodolist, ...prevState])
+      setTasks((prevState) => ({ ...prevState, [newTodolist.id]: [] }))
     })
   }
 
   const deleteTodolist = (id: string) => {
-    todolistsApi.deleteTodolist(id).then(() => setTodolists(todolists.filter((todolist) => todolist.id !== id)))
+    todolistsApi
+      .deleteTodolist(id)
+      .then(() => setTodolists((prevState) => prevState.filter((todolist) => todolist.id !== id)))
   }
 
   const changeTodolistTitle = (id: string, title: string) => {
     todolistsApi.changeTodolistTitle({ id, title }).then(() => {
-      setTodolists(todolists.map((todolist) => (todolist.id === id ? { ...todolist, title } : todolist)))
+      setTodolists((prevState) => prevState.map((todolist) => (todolist.id === id ? { ...todolist, title } : todolist)))
     })
   }
 
