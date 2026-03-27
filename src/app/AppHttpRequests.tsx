@@ -44,7 +44,6 @@ export const AppHttpRequests = () => {
     const newTask = { title }
     tasksApi.setTask(todolistId, newTask).then((res) => {
       const newTask = res.data.data.item
-      console.log(res.data.data.item)
       setTasks((prevState) => {
         return { ...prevState, [todolistId]: [newTask, ...(prevState[todolistId] ?? [])] }
       })
@@ -52,11 +51,9 @@ export const AppHttpRequests = () => {
   }
 
   const deleteTask = (todolistId: string, taskId: string) => {
-    tasksApi.deleteTask(todolistId, taskId).then((res) => {
-      console.log(res.data)
+    tasksApi.deleteTask(todolistId, taskId).then(() => {
       setTasks((prevState) => {
-        debugger
-        return { ...prevState, [todolistId]: tasks[todolistId].filter((t) => t.id !== taskId) }
+        return { ...prevState, [todolistId]: prevState[todolistId].filter((t) => t.id !== taskId) }
       })
     })
   }
@@ -94,11 +91,11 @@ export const AppHttpRequests = () => {
       deadline: task.deadline,
       status: task.status,
     }
-    tasksApi.changeTask(todolistId, task.id, model).then((res) => {
+    tasksApi.changeTask(todolistId, task.id, model).then(() => {
       setTasks((prevState) => {
         return {
           ...prevState,
-          todolistId,
+          [todolistId]: prevState[todolistId].map((t) => (t.id === task.id ? { ...t, title } : t)),
         }
       })
     })
@@ -116,7 +113,7 @@ export const AppHttpRequests = () => {
           <CreateItemForm onCreateItem={(title) => createTask(todolist.id, title)} />
           {tasks[todolist.id]?.map((task) => (
             <div key={task.id}>
-              <Checkbox checked={task.status ===TaskStatus.Completed} onChange={(e) => changeTaskStatus(e, task)} />
+              <Checkbox checked={task.status === TaskStatus.Completed} onChange={(e) => changeTaskStatus(e, task)} />
               <EditableSpan value={task.title} onChange={(title) => changeTaskTitle(task, title)} />
               <button onClick={() => deleteTask(todolist.id, task.id)}>x</button>
             </div>

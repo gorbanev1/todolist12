@@ -1,13 +1,18 @@
 import { instance } from "@/common/instance"
-import { DomainTask, GetTasksResponse, UpdateTaskModel } from "@/features/todolists/api/taskApi.types.ts"
+import {
+  CreateTaskModel,
+  DomainTask,
+  GetTasksResponse,
+  UpdateTaskModel,
+} from "@/features/todolists/api/taskApi.types.ts"
 import { BaseResponse } from "@/common/types"
 
 export const tasksApi = {
   getTasks(todolistId: string) {
     return instance.get<GetTasksResponse>(`/todo-lists/${todolistId}/tasks`)
   },
-  setTask(todolistId: string, task: DomainTask) {
-    return instance.post(`/todo-lists/${todolistId}/tasks`, task)
+  setTask(todolistId: string, task: CreateTaskModel) {
+    return instance.post<BaseResponse<{ item: DomainTask }>>(`/todo-lists/${todolistId}/tasks`, task)
   },
   deleteTask(todolistID: string, taskId: string) {
     return instance.delete<BaseResponse<{ item: DomainTask }>>(`todo-lists/${todolistID}/tasks/${taskId}`)
