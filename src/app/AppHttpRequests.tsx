@@ -26,7 +26,7 @@ export const AppHttpRequests = () => {
   const createTodolist = (title: string) => {
     todolistsApi.createTodolist(title).then((res) => {
       const newTodolist = res.data.data.item
-      setTodolists([newTodolist, ...todolists])
+      setTodolists((prevState) => [newTodolist, ...prevState])
     })
   }
 
@@ -69,18 +69,17 @@ export const AppHttpRequests = () => {
       deadline: task.deadline,
       status: e.target.checked ? TaskStatus.Completed : TaskStatus.New,
     }
-    tasksApi.changeTask(todolistId, task.id, model).then((res) => {
-      console.log(res.data)
+    tasksApi.changeTask(todolistId, task.id, model).then(() => {
       setTasks((prevState) => {
         return {
           ...prevState,
-          [todolistId]: tasks[todolistId].map((t) => (t.id === task.id ? { ...t, status: model.status } : t)),
+          [todolistId]: prevState[todolistId].map((t) => (t.id === task.id ? { ...t, status: model.status } : t)),
         }
       })
     })
   }
 
-  const changeTaskTitle = (task: any, title: string) => {
+  const changeTaskTitle = (task: DomainTask, title: string) => {
     const todolistId = task.todoListId
 
     const model: UpdateTaskModel = {
